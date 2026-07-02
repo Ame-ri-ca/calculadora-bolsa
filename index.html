@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Promediado</title>
+<title>Calculadora de Promediado Inteligente</title>
 
 <style>
 body {
@@ -20,7 +20,7 @@ body {
     padding: 20px;
     border-radius: 12px;
     width: 100%;
-    max-width: 420px;
+    max-width: 450px;
 }
 
 h2 {
@@ -62,12 +62,11 @@ button:hover {
 <body>
 
 <div class="container">
-<h2>Calculadora de Promediado</h2>
+<h2>Calculadora Inteligente</h2>
 
 <input id="acciones" placeholder="Acciones actuales" type="number">
-<input id="precio" placeholder="Precio promedio compra" type="number">
-<input id="actual" placeholder="Precio actual" type="number">
-<input id="porcentaje" placeholder="% a bajar promedio" type="number">
+<input id="precioCompra" placeholder="Precio de compra" type="number">
+<input id="precioActual" placeholder="Precio actual" type="number">
 
 <button onclick="calcular()">Calcular</button>
 <button onclick="limpiar()" style="background:#ef4444;">Limpiar</button>
@@ -76,47 +75,71 @@ button:hover {
 </div>
 
 <script>
+
 function calcular() {
 
 let A0 = parseFloat(document.getElementById("acciones").value);
-let P0 = parseFloat(document.getElementById("precio").value);
-let M = parseFloat(document.getElementById("actual").value);
-let r = parseFloat(document.getElementById("porcentaje").value);
+let P0 = parseFloat(document.getElementById("precioCompra").value);
+let M = parseFloat(document.getElementById("precioActual").value);
 
-if (!A0 || !P0 || !M || r <= 0) {
+if (!A0 || !P0 || !M) {
 document.getElementById("resultado").innerHTML =
 "⚠️ Completa todos los campos correctamente.";
 return;
 }
 
-let T = P0 * (1 - r / 100);
+/////////////////////////////
+// 1. DEVALUACIÓN AUTOMÁTICA
+/////////////////////////////
 
-if (T <= M) {
-document.getElementById("resultado").innerHTML =
-"❌ No es posible alcanzar ese promedio con el precio actual.";
-return;
-}
+let devaluacion = (P0 - M) / P0;
 
-let N = (A0 * (P0 - T)) / (T - M);
+// precio ajustado
+let precioAjustado = M * (1 - devaluacion);
 
-let inversion = N * M;
+/////////////////////////////
+// 2. VALOR POSICIÓN
+/////////////////////////////
 
-let nuevo_promedio = ((A0 * P0) + (N * M)) / (A0 + N);
+let valorPosicion = A0 * P0;
 
-document.getElementById("resultado").innerHTML =
-"📊 Acciones a comprar: <b>" + N.toFixed(2) + "</b><br>" +
-"💰 Inversión necesaria: <b>$" + inversion.toFixed(2) + "</b><br>" +
-"📉 Nuevo promedio: <b>$" + nuevo_promedio.toFixed(2) + "</b><br>" +
-"📦 Total acciones: <b>" + (A0 + N).toFixed(2) + "</b>";
+/////////////////////////////
+// 3. ACCIONES A COMPRAR
+/////////////////////////////
+
+let N = valorPosicion / precioAjustado;
+
+/////////////////////////////
+// 4. PRECIO FINAL (OPCIÓN B)
+/////////////////////////////
+
+let nuevoTotalAcciones = A0 + N;
+let nuevoTotalInvertido = valorPosicion + (N * precioAjustado);
+
+let precioFinal = nuevoTotalInvertido / nuevoTotalAcciones;
+
+/////////////////////////////
+// OUTPUT
+/////////////////////////////
+
+document.getElementById("resultado").innerHTML = `
+📉 Devaluación automática: <b>${(devaluacion * 100).toFixed(2)}%</b><br><br>
+
+💰 Precio ajustado: <b>$${precioAjustado.toFixed(2)}</b><br>
+
+📦 Acciones a comprar: <b>${N.toFixed(2)}</b><br>
+
+📊 Precio final (nuevo promedio): <b>$${precioFinal.toFixed(2)}</b>
+`;
 }
 
 function limpiar() {
 document.getElementById("acciones").value = "";
-document.getElementById("precio").value = "";
-document.getElementById("actual").value = "";
-document.getElementById("porcentaje").value = "";
+document.getElementById("precioCompra").value = "";
+document.getElementById("precioActual").value = "";
 document.getElementById("resultado").innerHTML = "";
 }
+
 </script>
 
 </body>
