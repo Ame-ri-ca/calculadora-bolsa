@@ -88,48 +88,34 @@ document.getElementById("resultado").innerHTML =
 return;
 }
 
-/////////////////////////////
-// 1. DEVALUACIÓN AUTOMÁTICA
-/////////////////////////////
-
+// 1. devaluación real
 let devaluacion = (P0 - M) / P0;
 
-// precio ajustado
-let precioAjustado = M * (1 - devaluacion);
+// 2. capital inicial
+let capital = A0 * P0;
 
-/////////////////////////////
-// 2. VALOR POSICIÓN
-/////////////////////////////
+// 3. acciones nuevas (según tu lógica exacta)
+let nuevasAcciones = capital / M;
 
-let valorPosicion = A0 * P0;
+// 4. total acciones
+let totalAcciones = A0 + nuevasAcciones;
 
-/////////////////////////////
-// 3. ACCIONES A COMPRAR
-/////////////////////////////
+// 5. nueva inversión
+let nuevaInversion = nuevasAcciones * M;
 
-let N = valorPosicion / precioAjustado;
-
-/////////////////////////////
-// 4. PRECIO FINAL (OPCIÓN B)
-/////////////////////////////
-
-let nuevoTotalAcciones = A0 + N;
-let nuevoTotalInvertido = valorPosicion + (N * precioAjustado);
-
-let precioFinal = nuevoTotalInvertido / nuevoTotalAcciones;
-
-/////////////////////////////
-// OUTPUT
-/////////////////////////////
+// 6. precio final correcto
+let precioFinal = (capital + nuevaInversion) / totalAcciones;
 
 document.getElementById("resultado").innerHTML = `
-📉 Devaluación automática: <b>${(devaluacion * 100).toFixed(2)}%</b><br><br>
+📉 Devaluación: <b>${(devaluacion * 100).toFixed(2)}%</b><br><br>
 
-💰 Precio ajustado: <b>$${precioAjustado.toFixed(2)}</b><br>
+💰 Capital inicial: <b>$${capital.toFixed(2)}</b><br>
 
-📦 Acciones a comprar: <b>${N.toFixed(2)}</b><br>
+📦 Acciones nuevas: <b>${nuevasAcciones.toFixed(2)}</b><br>
 
-📊 Precio final (nuevo promedio): <b>$${precioFinal.toFixed(2)}</b>
+📊 Total acciones: <b>${totalAcciones.toFixed(2)}</b><br><br>
+
+🎯 Precio final: <b>$${precioFinal.toFixed(2)}</b>
 `;
 }
 
